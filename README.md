@@ -22,7 +22,7 @@ Install this repository directly. Official Superpowers marketplace entries gener
 ### Oh My Pi
 
 ```bash
-omp plugin install https://github.com/audiodude/superpowers
+omp plugin install superpowers@github:audiodude/superpowers
 ```
 
 OMP has its own built-in instruction requiring matching skills. This fork includes `.omp/advisory-superpowers.ts`, a local OMP extension that narrows that requirement for this fork's workflow skills only. Copy it into `~/.omp/agent/extensions/advisory-superpowers.ts` and start a fresh session. It preserves domain-skill requirements and unrelated safety/verification instructions. See the extension's comments for the prompt forms it recognizes; a changed OMP prompt may need an updated adapter.
