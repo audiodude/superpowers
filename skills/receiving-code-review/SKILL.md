@@ -1,15 +1,15 @@
 ---
 name: receiving-code-review
-description: Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation
+description: Use when review feedback needs technical evaluation, especially if it is unclear or questionable
 ---
 
 # Code Review Reception
 
 ## Overview
 
-Code review requires technical evaluation, not emotional performance.
+Review feedback benefits from technical evaluation, not automatic agreement.
 
-**Core principle:** Verify before implementing. Ask before assuming. Technical correctness over social comfort.
+**Core principle:** Understand the request, check it against the code, and respond with evidence. This optional recipe requires no announcements, approvals for routine edits, task files, or other skill invocations.
 
 ## The Response Pattern
 
@@ -21,30 +21,22 @@ WHEN receiving code review feedback:
 3. VERIFY: Check against codebase reality
 4. EVALUATE: Technically sound for THIS codebase?
 5. RESPOND: Technical acknowledgment or reasoned pushback
-6. IMPLEMENT: One item at a time, test each
+6. IMPLEMENT: Apply valid feedback and verify the affected behavior proportionately
 ```
 
-## Forbidden Responses
+## Response Style
 
-**NEVER:**
-- "You're absolutely right!" (explicit instruction-file violation)
-- "Great point!" / "Excellent feedback!" (performative)
-- "Let me implement that now" (before verification)
-
-**INSTEAD:**
-- Restate the technical requirement
-- Ask clarifying questions
-- Push back with technical reasoning if wrong
-- Just start working (actions > words)
+Prefer a concise technical acknowledgment, a focused question, or direct action. Friendly thanks are fine; they do not substitute for evaluating the suggestion. Avoid claiming a reviewer is right before checking a material technical claim.
 
 ## Handling Unclear Feedback
 
 ```
-IF any item is unclear:
-  STOP - do not implement anything yet
-  ASK for clarification on unclear items
+IF an item is unclear:
+  Check available code and context first.
+  Ask about the remaining material ambiguity.
+  Continue clear, independent items; pause dependent changes until understood.
 
-WHY: Items may be related. Partial understanding = wrong implementation.
+WHY: Related items may need a shared decision; independent fixes need not wait.
 ```
 
 **Example:**
@@ -52,8 +44,8 @@ WHY: Items may be related. Partial understanding = wrong implementation.
 your human partner: "Fix 1-6"
 You understand 1,2,3,6. Unclear on 4,5.
 
-❌ WRONG: Implement 1,2,3,6 now, ask about 4,5 later
-✅ RIGHT: "I understand items 1,2,3,6. Need clarification on 4 and 5 before proceeding."
+If 1,2,3,6 are independent: implement them and ask a focused question about 4,5.
+If 4,5 determine the design of the others: clarify that dependency before editing.
 ```
 
 ## Source-Specific Handling
@@ -61,7 +53,7 @@ You understand 1,2,3,6. Unclear on 4,5.
 ### From your human partner
 - **Trusted** - implement after understanding
 - **Still ask** if scope unclear
-- **No performative agreement**
+- **Concise acknowledgment** is enough
 - **Skip to action** or technical acknowledgment
 
 ### From External Reviewers
@@ -83,7 +75,7 @@ IF conflicts with your human partner's prior decisions:
   Stop and discuss with your human partner first
 ```
 
-**your human partner's rule:** "External feedback - be skeptical, but check carefully"
+External feedback can be valuable without being authoritative; check it carefully.
 
 ## YAGNI Check for "Professional" Features
 
@@ -95,19 +87,19 @@ IF reviewer suggests "implementing properly":
   IF used: Then implement properly
 ```
 
-**your human partner's rule:** "You and reviewer both report to me. If we don't need this feature, don't add it."
+Check for public or external consumers before treating an unused local symbol as removable. Keep scope aligned with the user's request rather than adding an unrequested feature.
 
 ## Implementation Order
 
 ```
 FOR multi-item feedback:
-  1. Clarify anything unclear FIRST
-  2. Then implement in this order:
+  1. Resolve material ambiguity for dependent items
+  2. A useful order is:
      - Blocking issues (breaks, security)
      - Simple fixes (typos, imports)
      - Complex fixes (refactoring, logic)
-  3. Test each fix individually
-  4. Verify no regressions
+  3. Run focused checks for meaningful behavioral changes
+  4. Verify related interactions where risk warrants it
 ```
 
 ## When To Push Back
@@ -130,22 +122,14 @@ Push back when:
 
 ## Acknowledging Correct Feedback
 
-When feedback IS correct:
-```
-✅ "Fixed. [Brief description of what changed]"
-✅ "Good catch - [specific issue]. Fixed in [location]."
-✅ [Just fix it and show in the code]
+When feedback is correct, state the concrete change and evidence, for example:
 
-❌ "You're absolutely right!"
-❌ "Great point!"
-❌ "Thanks for catching that!"
-❌ "Thanks for [anything]"
-❌ ANY gratitude expression
+```
+"Fixed the null-input path in parseOptions; the focused regression test passes."
+"Good catch — that branch omitted cleanup. Updated it and checked the error path."
 ```
 
-**Why no thanks:** Actions speak. Just fix it. The code itself shows you heard the feedback.
-
-**If you catch yourself about to write "Thanks":** DELETE IT. State the fix instead.
+Do not claim a fix or test result that has not been observed. There is no prescribed phrase or ban on gratitude.
 
 ## Gracefully Correcting Your Pushback
 
@@ -167,11 +151,11 @@ State the correction factually and move on.
 |---------|-----|
 | Performative agreement | State requirement or just act |
 | Blind implementation | Verify against codebase first |
-| Batch without testing | One at a time, test each |
+| Unchecked interacting changes | Verify relevant behavior together |
 | Assuming reviewer is right | Check if breaks things |
 | Avoiding pushback | Technical correctness > comfort |
-| Partial implementation | Clarify all items first |
-| Can't verify, proceed anyway | State limitation, ask for direction |
+| Unclear dependent items | Resolve the shared ambiguity before dependent edits |
+| Can't verify a claim | State the limitation and investigate or ask for missing context |
 
 ## Real Examples
 
@@ -197,7 +181,7 @@ Reviewer: "Implement proper metrics tracking with database, date filters, CSV ex
 ```
 your human partner: "Fix items 1-6"
 You understand 1,2,3,6. Unclear on 4,5.
-✅ "Understand 1,2,3,6. Need clarification on 4 and 5 before implementing."
+"I'll handle the independent items 1,2,3,6. For 4 and 5, should the old API remain supported?"
 ```
 
 ## GitHub Thread Replies

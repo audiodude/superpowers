@@ -1,5 +1,13 @@
 # Superpowers Release Notes
 
+## Advisory fork (2026-09-06)
+
+- Skills are optional references when requested or clearly useful. Straightforward questions and authorized edits no longer require a bootstrap, design approval, or workflow chain.
+- Removed session-start policy injection while retaining native skill discovery. Planning, TDD, worktrees, delegation, review, and branch integration are selectable techniques.
+- Preserved root-cause investigation, destructive-action safeguards, and truthful, proportionate verification. Working code is not deleted merely for being written before tests.
+- Added an OMP-specific prompt adapter for its independent mandatory-skill policy, scoped to Superpowers workflow names; domain-skill and safety requirements remain intact.
+- Install from `audiodude/superpowers`, replacing the upstream installation, and start a fresh session. Historical entries below describe upstream releases.
+
 ## v6.3.0 (2026-08-12)
 
 ### Harness Support

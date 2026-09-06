@@ -54,8 +54,10 @@ EXCLUDES=(
   "/.github/"
   "/.gitignore"
   "/.gitmodules"
+  "/.hermes-plugin/"
   "/.kimi-plugin/"
   "/.opencode/"
+  "/.omp/"
   "/.pi/"
   "/.pre-commit-config.yaml"
   "/.version-bump.json"
@@ -424,20 +426,20 @@ if [[ $BOOTSTRAP -eq 1 ]]; then
   COMMIT_TITLE="bootstrap superpowers v$UPSTREAM_VERSION from upstream main @ $UPSTREAM_SHORT"
   PR_BODY="Initial bootstrap of the superpowers plugin from upstream \`main\` @ \`$UPSTREAM_SHORT\` (v$UPSTREAM_VERSION).
 
-Creates \`plugins/superpowers/\` by copying the tracked plugin files from upstream, including \`.codex-plugin/plugin.json\`, \`assets/\`, and \`hooks/\`.
+Creates \`plugins/superpowers/\` by copying the tracked plugin files from this advisory fork, including \`.codex-plugin/plugin.json\`, \`assets/\`, and \`skills/\`.
 
 Run via: \`scripts/sync-to-codex-plugin.sh --bootstrap\`
-Upstream commit: https://github.com/obra/superpowers/commit/$UPSTREAM_SHA
+Source commit: https://github.com/audiodude/superpowers/commit/$UPSTREAM_SHA
 
 This is a one-time bootstrap. Subsequent syncs will be normal (non-bootstrap) runs using the same tracked upstream plugin files."
 else
   COMMIT_TITLE="sync superpowers v$UPSTREAM_VERSION from upstream main @ $UPSTREAM_SHORT"
   PR_BODY="Automated sync from superpowers upstream \`main\` @ \`$UPSTREAM_SHORT\` (v$UPSTREAM_VERSION).
 
-Copies the tracked plugin files from upstream, including the committed Codex manifest, assets, and hooks.
+Copies the tracked plugin files from this advisory fork, including the committed Codex manifest, assets, and optional skills.
 
 Run via: \`scripts/sync-to-codex-plugin.sh\`
-Upstream commit: https://github.com/obra/superpowers/commit/$UPSTREAM_SHA
+Source commit: https://github.com/audiodude/superpowers/commit/$UPSTREAM_SHA
 
 Running the sync tool again against the same upstream SHA should produce a PR with an identical diff — use that to verify the tool is behaving."
 fi
@@ -445,7 +447,7 @@ fi
 git commit --quiet -m "$COMMIT_TITLE
 
 Automated sync via scripts/sync-to-codex-plugin.sh
-Upstream: https://github.com/obra/superpowers/commit/$UPSTREAM_SHA
+Source: https://github.com/audiodude/superpowers/commit/$UPSTREAM_SHA
 Branch:   $SYNC_BRANCH"
 
 echo "Pushing $SYNC_BRANCH to $FORK..."

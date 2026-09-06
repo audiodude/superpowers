@@ -9,11 +9,11 @@
 #   --project-dir <path>  Store session files under <path>/.superpowers/brainstorm/
 #                         instead of /tmp. Files persist after server stops.
 #   --host <bind-host>    Host/interface to bind (default: 127.0.0.1).
-#                         Use 0.0.0.0 in remote/containerized environments.
+#                         Use 0.0.0.0 only with authorized network exposure.
 #   --url-host <host>     Hostname shown in returned URL JSON.
 #   --idle-timeout-minutes <n>  Shut down after n minutes idle (default 240 = 4h).
-#   --open                Auto-open the browser on the first screen (use only
-#                         after the user approves the visual companion).
+#   --open                Auto-open the browser on the first screen (use when
+#                         the user requested or accepted the visual companion).
 #   --foreground          Run server in the current terminal (no backgrounding).
 #   --background          Force background mode (overrides Codex auto-foreground).
 

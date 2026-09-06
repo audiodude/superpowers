@@ -1,171 +1,74 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: Use when requested or when complex dependencies, consequential changes, or an implementation handoff would benefit from a written plan.
 ---
 
 # Writing Plans
 
-## Overview
+A useful implementation plan makes the goal, constraints, dependencies, and verification clear to someone who lacks the author's context. It is an optional coordination tool, not a gate before touching code. For straightforward authorized work, act directly or keep a short in-chat outline.
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+No announcement, prior brainstorming session, approval ritual, worktree, subagent, or other skill is required. Follow the actual task instructions and use only the level of detail that reduces uncertainty.
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+## Scope and Structure
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+Read the relevant implementation and project conventions. Identify files and responsibilities before decomposing work. Prefer existing patterns and avoid unrelated restructuring.
 
-**Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
+Group steps around observable deliverables. Fold setup, configuration, and documentation into the change that needs them. Split tasks where interfaces or independently verifiable outcomes create a meaningful boundary—not into arbitrary timed steps or mandatory reviewer gates. Parallel work is an option only where ownership and dependencies allow it.
 
-**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+Capture exact requirements such as version floors, platform support, and compatibility limits once, in shared constraints. For a handoff, include concrete interfaces consumed and produced by each task. Do not assume an executor will infer neighboring tasks' names or types.
 
-## Scope Check
+## Suggested Plan Format
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
-
-## File Structure
-
-Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
-
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
-
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
-
-## Task Right-Sizing
-
-A task is the smallest unit that carries its own test cycle and is worth a
-fresh reviewer's gate. When drawing task boundaries: fold setup,
-configuration, scaffolding, and documentation steps into the task whose
-deliverable needs them; split only where a reviewer could meaningfully
-reject one task while approving its neighbor. Each task ends with an
-independently testable deliverable.
-
-## Bite-Sized Task Granularity
-
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
-
-## Plan Document Header
-
-**Every plan MUST start with this header:**
+Adapt or omit sections that do not apply. Use the project's location convention for durable plans; otherwise `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md` is an option. A plan file, checkbox list, or commit is not required by this guide.
 
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+**Goal:** [Observable outcome]
+**Scope and non-goals:** [What is and is not included]
+**Approach:** [Key decisions and reasoning]
+**Source requirements:** [User request or existing spec, if any]
 
-**Goal:** [One sentence describing what this builds]
+## Shared Constraints
+[Exact compatibility, dependency, platform, and safety requirements]
 
-**Architecture:** [2-3 sentences about approach]
+## Task: [Deliverable]
+**Files:** [Relevant paths and symbols; identify creates vs modifications]
+**Dependencies:** [Earlier outcomes needed; independent work if relevant]
+**Interfaces:** [Concrete inputs, outputs, signatures, or schemas for handoffs]
+**Change:** [Actionable implementation steps and important edge cases]
+**Verification:** [Command or scenario, observable expected result]
 
-**Tech Stack:** [Key technologies/libraries]
-
-**Spec:** [path to the spec/design doc this plan implements — the plan
-argues from the spec, so the spec travels with it; executors read both]
-
-## Global Constraints
-
-[The spec's project-wide requirements — version floors, dependency limits,
-naming and copy rules, platform requirements — one line each, with exact
-values copied verbatim from the spec. Every task's requirements implicitly
-include this section.]
-
----
+## Risks and Open Decisions
+[Unresolved facts, how to obtain them, and choices needing user input]
 ```
 
-## Task Structure
+Checkboxes can help track a long execution; they need not become a separate task artifact.
 
-````markdown
-### Task N: [Component Name]
+## Make Steps Actionable
 
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
+Provide the detail a competent engineer needs without duplicating the entire future implementation. Include exact paths and important signatures. Add code examples when they clarify non-obvious behavior, not merely to fill a template.
 
-**Interfaces:**
-- Consumes: [what this task uses from earlier tasks — exact signatures]
-- Produces: [what later tasks rely on — exact function names, parameter
-  and return types. A task's implementer sees only their own task; this
-  block is how they learn the names and types neighboring tasks use.]
+For example, a validation change could specify:
 
-- [ ] **Step 1: Write the failing test**
+> In `src/users.py:create_user`, reject an empty email before persistence using the existing validation error type. Preserve current handling for valid addresses. Exercise the public create-user path with an empty email and verify its error response and absence of a persisted user; also cover a valid request. Use the repository's existing user tests for the regression.
 
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
-```
+Do not disguise unknowns with "appropriate error handling" or "implement later." Resolve facts that are available in the repository; state genuinely unresolved decisions and how they affect execution. A plan can include an investigation step where implementation depends on its result, rather than inventing an API or pretending the answer is known.
 
-- [ ] **Step 2: Run test to verify it fails**
+## Verification and Review
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
+Choose verification that demonstrates the changed contract. For a bug fix, a reproduction or regression test is valuable. Test-first development can clarify uncertain behavior; `superpowers:test-driven-development` is an optional reference, not a required phase for every task. UI and operational changes may need a runtime exercise in addition to automated checks.
 
-- [ ] **Step 3: Write minimal implementation**
+Before handing off a substantial plan, check:
+1. **Coverage:** each requested outcome has an implementation and verification path.
+2. **Consistency:** names, types, and dependencies agree across tasks.
+3. **Buildability:** steps have enough detail to act on; uncertainty is explicit.
+4. **Scope:** no unrequested features, mandatory commits, or accidental process gates.
 
-```python
-def function(input):
-    return expected
-```
+The [plan review template](plan-document-reviewer-prompt.md) can help with self-review or an optional independent review.
 
-- [ ] **Step 4: Run test to verify it passes**
+## Execution
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
+If the user requested only a plan, deliver it without starting implementation. If implementation is already authorized, continue without asking the user to re-authorize the same work. Choose inline execution by default for tightly coupled or small work; delegation can help with genuinely independent tasks when available and appropriate.
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-````
-
-## No Placeholders
-
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
-
-## Self-Review
-
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
-
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
-
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
-
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
-
-If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
-
-## Execution Handoff
-
-After saving the plan, offer execution choice:
-
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
-
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
-
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
-
-**Which approach?"**
-
-**If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
-- Fresh subagent per task + two-stage review
-
-**If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
-- Batch execution with checkpoints for review
+`superpowers:executing-plans` and `superpowers:subagent-driven-development` are optional references for those execution styles. Neither is a required next step. Report actual verification results, not planned or assumed success.

@@ -1,6 +1,6 @@
 # Writing Good Tests
 
-**Load this reference when:** writing or changing tests, adding mocks, or
+**Optional reference for:** writing or changing tests, adding mocks, or
 adding cleanup/helper methods for tests.
 
 ## Overview
@@ -47,9 +47,9 @@ retried 5 times and the 6th attempt never happens."
 **Behavior, not text.** Asserting that a script, skill, or config
 contains an exact line proves only that the source is the source. Run
 scripts against controlled inputs and assert outputs, side effects, or
-exit codes. Documents that instruct agents are tested by the consuming
-agent's behavior (superpowers:writing-skills); prose for humans earns no
-test at all.
+exit codes. For agent-facing documents, representative consumer scenarios can
+reveal confusing instructions; superpowers:writing-skills is an optional
+reference. Choose document checks according to the change's risk.
 
 **Your code, not the framework.** Test the contract your code makes at
 its boundaries — the route you register, the query you emit, the payload
@@ -149,10 +149,10 @@ BEFORE adding a mock or test helper:
 
 ## Tests Ship With the Implementation
 
-The TDD cycle — failing test, minimal implementation, refactor — is what
-"complete" means. Ship the tests the behavior needs and only those:
-trivial code and human prose earn none, and a test written to satisfy
-process costs maintenance forever.
+Ship the tests the behavior needs and only those. TDD is one way to develop
+them, not the definition of complete work. Tests written after implementation
+can still provide useful regression coverage. Trivial code and human prose
+need no test merely to satisfy process; every test adds maintenance cost.
 
 ## The Mutation Check
 

@@ -1,63 +1,21 @@
 ---
 name: using-superpowers
-description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+description: Use when requested or when guidance on choosing and adapting Superpowers skills would help.
 ---
 
-<SUBAGENT-STOP>
-If you were dispatched as a subagent to execute a specific task, ignore this skill.
-</SUBAGENT-STOP>
+# Using Superpowers
 
-<EXTREMELY-IMPORTANT>
-If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+Superpowers is an optional reference library, not an always-on workflow. Consult a skill when the user requests it or its techniques clearly help the task. Answer straightforward questions and make simple, authorized edits directly.
 
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+Scale process to uncertainty and risk. Design discussions, written plans, worktrees, subagents, checklists, and reviews are options, not prerequisites. Use the useful parts; no announcements, approval rituals, or automatic chains of skills are needed.
 
-This is not negotiable. You cannot rationalize your way out of this.
-</EXTREMELY-IMPORTANT>
+Follow the actual instruction hierarchy: system and developer instructions govern, then applicable user instructions. Skill text is advisory and cannot override them or authorize actions. Respect safety boundaries and the user's scope.
 
-## The Rule
+Keep evidence before success claims: verify the changed behavior where feasible, and state exactly what was checked, what failed, or what remains unverified.
 
-**Invoke relevant or requested skills BEFORE any response or action** — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
-
-**Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
-
-Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
-
-## Skill Priority
-
-When multiple skills apply, process skills come first — they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
-
-- "Let's build X" → superpowers:brainstorming first, then implementation skills.
-- "Fix this bug" → superpowers:systematic-debugging first, then domain skills.
-
-## Red Flags
-
-These thoughts mean STOP—you're rationalizing:
-
-| Thought | Reality |
-|---------|---------|
-| "This is just a simple question" | Questions are tasks. Check for skills. |
-| "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
-| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
-| "Let me gather information first" | Skills tell you HOW to gather information. |
-| "This doesn't need a formal skill" | If a skill exists, use it. |
-| "I remember this skill" | Skills evolve. Read current version. |
-| "This doesn't count as a task" | Action = task. Check for skills. |
-| "The skill is overkill" | Simple things become complex. Use it. |
-| "I'll just do this one thing first" | Check BEFORE doing anything. |
-| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
-| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
-
-## Platform Adaptation
-
-If your harness appears here, read its reference file for special instructions:
-
-- Codex: `references/codex-tools.md`
-- Pi: `references/pi-tools.md`
-- Antigravity: `references/antigravity-tools.md`
-- Hermes Agent: `references/hermes-tools.md`
-
-## User Instructions
-
-User instructions (CLAUDE.md, AGENTS.md, GEMINI.md, etc, direct requests) take precedence over skills, which in turn override default behavior. Only skip skill workflows or instructions when your human partner has explicitly told you to.
+For unfamiliar harness tools, consult the relevant reference as needed:
+- [Codex](references/codex-tools.md)
+- [Pi](references/pi-tools.md)
+- [Gemini CLI](references/gemini-tools.md)
+- [Antigravity](references/antigravity-tools.md)
+- [Hermes Agent](references/hermes-tools.md)

@@ -2,6 +2,8 @@
 
 Browser-based visual brainstorming companion for showing mockups, diagrams, and options.
 
+Optional reference for sessions where visual collaboration is useful. It does not require a design approval cycle or prevent direct work on an already-authorized request. Browser interaction, server exposure, and process management remain subject to the active harness instructions and user authorization.
+
 ## When to Use
 
 Decide per-question, not per-session. The test: **would the user understand this better by seeing it than reading it?**
@@ -33,8 +35,8 @@ The server watches a directory for HTML files and serves the newest one to the b
 ## Starting a Session
 
 ```bash
-# Start AFTER the user approves the companion. --open auto-opens their browser on
-# the first screen; --project-dir persists mockups and enables same-port restart.
+# Start when the companion was requested or accepted. --open opens the browser on
+# the first screen; omit it if browser opening is not authorized or useful.
 scripts/start-server.sh --project-dir /path/to/project --open
 
 # Returns: {"type":"server-started","port":52341,
@@ -92,7 +94,7 @@ bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 
 **Other environments:** The server must keep running in the background across conversation turns. If your environment reaps detached processes, use `--foreground` and launch the command with your platform's background execution mechanism.
 
-If the URL is unreachable from your browser (common in remote/containerized setups), bind a non-loopback host:
+If the URL is unreachable from your browser (common in remote/containerized setups), first check local forwarding options. A non-loopback bind exposes the server beyond localhost; use it only when authorized and with appropriate network controls:
 
 ```bash
 scripts/start-server.sh \
@@ -112,17 +114,17 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
    - Use your file-creation tool — **never use cat/heredoc** (dumps noise into terminal)
    - Server automatically serves the newest file
 
-2. **Tell user what to expect and end your turn:**
-   - Remind them of the URL (every step, not just first)
-   - Give a brief text summary of what's on screen (e.g., "Showing 3 layout options for the homepage")
-   - Ask them to respond in the terminal: "Take a look and let me know what you think. Click to select an option if you'd like."
+2. **Tell the user what is on screen:**
+   - Share the complete URL when first opening the companion or when needed again
+   - Give a brief text summary (e.g., "Showing 3 layout options for the homepage")
+   - Ask for feedback when a real choice is unresolved; no response is required just to advance already-authorized work
 
 3. **On your next turn** — after the user responds in the terminal:
    - Read `$STATE_DIR/events` if it exists — this contains the user's browser interactions (clicks, selections) as JSON lines
    - Merge with the user's terminal text to get the full picture
    - The terminal message is the primary feedback; `state_dir/events` provides structured interaction data
 
-4. **Iterate or advance** — if feedback changes current screen, write a new file (e.g., `layout-v2.html`). Only move to the next question when the current step is validated.
+4. **Iterate or advance** — if feedback changes the current screen, write a new file (e.g., `layout-v2.html`). Resolve consequential open choices with the user; do not make every screen a mandatory approval gate.
 
 5. **Unload when returning to terminal** — when the next step doesn't need the browser (e.g., a clarifying question, a tradeoff discussion), push a waiting screen to clear the stale content:
 

@@ -1,10 +1,10 @@
 # Plan Document Reviewer Prompt Template
 
-Use this template when dispatching a plan document reviewer subagent.
+Optional template for self-review or an independent plan review when it would help. Using it does not require a subagent or create an approval gate.
 
 **Purpose:** Verify the plan is complete, matches the spec, and has proper task decomposition.
 
-**Dispatch after:** The complete plan is written.
+**When useful:** A substantial plan is ready for a second look.
 
 ```
 Subagent (general-purpose):
@@ -13,7 +13,7 @@ Subagent (general-purpose):
     You are a plan document reviewer. Verify this plan is complete and ready for implementation.
 
     **Plan to review:** [PLAN_FILE_PATH]
-    **Spec for reference:** [SPEC_FILE_PATH]
+    **Requirements for reference:** [SPEC_FILE_PATH or supplied user requirements]
 
     ## What to Check
 
@@ -30,19 +30,19 @@ Subagent (general-purpose):
     An implementer building the wrong thing or getting stuck is an issue.
     Minor wording, stylistic preferences, and "nice to have" suggestions are not.
 
-    Approve unless there are serious gaps — missing requirements from the spec,
-    contradictory steps, placeholder content, or tasks so vague they can't be acted on.
+    Report serious gaps — missing requirements, contradictory steps, unexplained
+    placeholders, or tasks so vague they cannot be acted on.
 
     ## Output Format
 
     ## Plan Review
 
-    **Status:** Approved | Issues Found
+    **Status:** No Blocking Issues Found | Issues Found
 
     **Issues (if any):**
     - [Task X, Step Y]: [specific issue] - [why it matters for implementation]
 
-    **Recommendations (advisory, do not block approval):**
+    **Recommendations (advisory):**
     - [suggestions for improvement]
 ```
 

@@ -4,7 +4,7 @@ Automated tests for superpowers skills using Claude Code CLI.
 
 ## Overview
 
-This test suite verifies that skills are loaded correctly and Claude follows them as expected. Tests invoke Claude Code in headless mode (`claude -p`) and verify the behavior.
+These tests exercise explicitly requested skills and their utilities. They do not require automatic skill loading or fixed workflow rituals.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ This test suite verifies that skills are loaded correctly and Claude follows the
 
 ### Run specific test:
 ```bash
-./run-skill-tests.sh --test test-subagent-driven-development.sh
+./run-skill-tests.sh --test test-sdd-workspace.sh
 ```
 
 ### Run with verbose output:
@@ -82,38 +82,13 @@ echo "=== All tests passed ==="
 
 ### Fast Tests (run by default)
 
-#### test-subagent-driven-development.sh
-Tests skill content and requirements (~2 minutes):
-- Skill loading and accessibility
-- Workflow ordering (spec compliance before code quality)
-- Self-review requirements documented
-- Plan reading efficiency documented
-- Spec compliance reviewer skepticism documented
-- Review loops documented
-- Task context provision documented
+#### test-sdd-workspace.sh
+Tests the durable workspace utility's state and safety contracts without requiring a model.
 
 ### Integration Tests (use --integration flag)
 
 #### test-subagent-driven-development-integration.sh
-Full workflow execution test (~10-30 minutes):
-- Creates real test project with Node.js setup
-- Creates implementation plan with 2 tasks
-- Executes plan using subagent-driven-development
-- Verifies actual behaviors:
-  - Plan read once at start (not per task)
-  - Full task text provided in subagent prompts
-  - Subagents perform self-review before reporting
-  - Spec compliance review happens before code quality
-  - Spec reviewer reads code independently
-  - Working implementation is produced
-  - Tests pass
-  - Proper git commits created
-
-**What it tests:**
-- The workflow actually works end-to-end
-- Our improvements are actually applied
-- Subagents follow the skill correctly
-- Final code is functional and tested
+Executes a real two-task plan with an explicitly requested skill, checks the exported math API and absence of extra exports, runs the delivered tests, and reports token usage. It does not pin review order, task-list usage, or commit count.
 
 #### test-worktree-native-preference.sh
 RED-GREEN-REFACTOR validation for the using-git-worktrees skill (~5 minutes):
@@ -141,7 +116,7 @@ RED-GREEN-REFACTOR validation for the using-git-worktrees skill (~5 minutes):
 
 With `--verbose`, you'll see full Claude output:
 ```bash
-./run-skill-tests.sh --verbose --test test-subagent-driven-development.sh
+./run-skill-tests.sh --verbose --test test-sdd-workspace.sh
 ```
 
 Without verbose, only failures show output.
@@ -158,8 +133,6 @@ To run in CI:
 
 ## Notes
 
-- Tests verify skill *instructions*, not full execution
-- Full workflow tests would be very slow
-- Focus on verifying key skill requirements
-- Tests should be deterministic
-- Avoid testing implementation details
+- Test observable outcomes, not exact wording or fixed invocation counts.
+- Keep live model runs separate from deterministic utility checks.
+- Confirm the local advisory fork is installed before interpreting results.

@@ -1,64 +1,37 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+description: Use when a written implementation plan would help guide execution across several tasks
 ---
 
 # Executing Plans
 
 ## Overview
 
-Load plan, review critically, execute all tasks, report when complete.
+Read the plan critically, carry out the requested work, and report the result with appropriate evidence. This is an optional recipe: it does not require announcements, task files, worktrees, subagents, commits, or a finishing ceremony.
 
-**Announce at start:** "I'm using the executing-plans skill to implement this plan."
+## Review the Plan
 
-**Note:** Tell your human partner that Superpowers works much better with access to subagents (Claude Code, Codex CLI, Codex App, Copilot CLI, and Gemini CLI all qualify; see the per-platform tool refs in `../using-superpowers/references/`). If subagents are available, use superpowers:subagent-driven-development instead of this skill.
+- Read the plan and relevant requirements before relying on its steps.
+- Check dependencies, conflicting instructions, and assumptions that affect correctness or scope.
+- Use the current workspace unless isolation is requested or clearly useful. The optional superpowers:using-git-worktrees guide describes that choice.
+- Resolve ordinary implementation details from repository context. Ask a focused question only when a material ambiguity cannot be resolved safely.
+- Track progress in the existing task mechanism or a brief note if the plan is long enough to need it; do not create tracking files for their own sake.
 
-## The Process
+## Execute Tasks
 
-### Step 1: Load and Review Plan
-1. Ensure an isolated workspace: use superpowers:using-git-worktrees to create one or verify the existing one
-2. Read plan file
-3. Review critically - identify any questions or concerns about the plan
-4. If concerns: Raise them with your human partner before starting
-5. If no concerns: Create todos for the plan items and proceed
+1. Work in dependency order, using the plan as guidance rather than following stale steps blindly.
+2. Reuse repository conventions and keep changes within the requested scope.
+3. Choose checks that exercise the affected behavior. Follow explicit verification requirements; report checks that could not be run.
+4. Record significant deviations and why they were necessary.
 
-### Step 2: Execute Tasks
+Direct execution is fine even when subagents are available. For genuinely independent, substantial tasks, optional superpowers:subagent-driven-development or superpowers:dispatching-parallel-agents can help; neither is a prerequisite.
 
-For each task:
-1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+## Handle Blockers
 
-### Step 3: Complete Development
+Investigate missing dependencies, failing checks, and unexpected behavior before guessing. Continue independent reachable work when a blocker affects only one part. Ask for missing information when it cannot be obtained from the tools or context, and explain what is blocked and what you tried.
 
-After all tasks complete and verified:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+Revisit the plan when requirements change or new evidence invalidates the approach. Preserve security and correctness requirements rather than treating the plan as permission to bypass them.
 
-## When to Stop and Ask for Help
+## Finish
 
-**STOP executing immediately when:**
-- Hit a blocker (missing dependency, test fails, instruction unclear)
-- Plan has critical gaps preventing starting
-- You don't understand an instruction
-- Verification fails repeatedly
-
-**Ask for clarification rather than guessing.**
-
-## When to Revisit Earlier Steps
-
-**Return to Review (Step 1) when:**
-- Partner updates the plan based on your feedback
-- Fundamental approach needs rethinking
-
-**Don't force through blockers** - stop and ask.
-
-## Remember
-- Review plan critically first
-- Follow plan steps exactly
-- Don't skip verifications
-- Reference skills when plan says to
-- Stop when blocked, don't guess
-- Never start implementation on main/master branch without explicit user consent
+Summarize the actual changes, relevant verification, and remaining gaps. Do not automatically commit, push, create a PR, or merge. If integration is requested, follow that request; superpowers:finishing-a-development-branch is an optional reference, not a mandatory next step.

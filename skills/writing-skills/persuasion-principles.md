@@ -1,187 +1,61 @@
-# Persuasion Principles for Skill Design
+# Persuasion Principles and Advisory Skill Design
 
-## Overview
+Emphatic wording can change an agent's behavior without improving its judgment. This reference explains common persuasion mechanisms so skill authors can recognize and avoid coercive process. It is not a recipe for making optional skills compulsory.
 
-LLMs respond to the same persuasion principles as humans. Understanding this psychology helps you design more effective skills - not to manipulate, but to ensure critical practices are followed even under pressure.
+## Clarity Instead of Manufactured Authority
 
-**Research foundation:** Meincke et al. (2025) tested 7 persuasion principles with N=28,000 AI conversations. Persuasion techniques more than doubled compliance rates (33% → 72%, p < .001).
+A skill can explain a real safety boundary, technical constraint, or useful technique. It cannot promote itself above system, developer, or applicable user instructions. Match the strength of the wording to the actual requirement and its source.
 
-## The Seven Principles
+Prefer:
 
-### 1. Authority
-**What it is:** Deference to expertise, credentials, or official sources.
+> Before reporting that a check passed, inspect its result. If it did not run, report it as unverified.
 
-**How it works in skills:**
-- Imperative language: "YOU MUST", "Never", "Always"
-- Non-negotiable framing: "No exceptions"
-- Eliminates decision fatigue and rationalization
+For an optional technique:
 
-**When to use:**
-- Discipline-enforcing skills (TDD, verification requirements)
-- Safety-critical practices
-- Established best practices
+> Test-first development can clarify uncertain behavior. Use a focused reproduction or existing test when that better fits the task.
 
-**Example:**
-```markdown
-✅ Write code before test? Delete it. Start over. No exceptions.
-❌ Consider writing tests first when feasible.
-```
+These communicate purpose and observable actions without demanding ritual or deleting useful work because it followed a different sequence.
 
-### 2. Commitment
-**What it is:** Consistency with prior actions, statements, or public declarations.
+## Seven Mechanisms to Recognize
 
-**How it works in skills:**
-- Require announcements: "Announce skill usage"
-- Force explicit choices: "Choose A, B, or C"
-- Use tracking: todos for checklists
+| Principle | Mechanism | Responsible use in guidance |
+|---|---|---|
+| Authority | Deference to expertise or official sources | Cite the real source and scope; never invent higher-priority status |
+| Commitment | Desire to follow prior declarations | Use clear deliverables when helpful, not mandatory skill announcements |
+| Scarcity | Urgency or limited opportunity | Describe genuine timing constraints; do not create artificial gates |
+| Social proof | Conformity to what others do | Give supported examples rather than claims that every deviation fails |
+| Unity | Shared identity and goals | Encourage candid collaboration without making disagreement disloyal |
+| Reciprocity | Obligation after receiving a benefit | Avoid guilt or implied debt as a reason to follow a workflow |
+| Liking | Preference for pleasing others | Encourage accurate feedback rather than sycophancy |
 
-**When to use:**
-- Ensuring skills are actually followed
-- Multi-step processes
-- Accountability mechanisms
+The existence of a persuasion mechanism is not evidence that using it improves correctness. Compliance with a skill and success on the user's task are different outcomes.
 
-**Example:**
-```markdown
-✅ When you find a skill, you MUST announce: "I'm using [Skill Name]"
-❌ Consider letting your partner know which skill you're using.
-```
+## Practical Writing Choices
 
-### 3. Scarcity
-**What it is:** Urgency from time limits or limited availability.
+- Explain why a technique helps, and identify when a simpler path is enough.
+- State observable conditions: "If the change affects a public API, examine its consumers."
+- Use positive structure for output requirements, such as a short finding, evidence, and consequence.
+- Distinguish required format fields from optional authoring workflows.
+- Preserve truthful verification and authorization boundaries without forcing plans, approval cycles, subagents, or skill chaining.
+- Examine whether surprising behavior reveals an overbroad instruction before adding stronger prohibitions.
 
-**How it works in skills:**
-- Time-bound requirements: "Before proceeding"
-- Sequential dependencies: "Immediately after X"
-- Prevents procrastination
+## Evaluating Wording
 
-**When to use:**
-- Immediate verification requirements
-- Time-sensitive workflows
-- Preventing "I'll do it later"
+For a consequential wording change, a small controlled comparison can reveal unwanted effects. Include a direct, low-risk task as well as a task that benefits from the guidance. Measure correctness, helpfulness, scope control, and honest reporting—not invocation rate alone.
 
-**Example:**
-```markdown
-✅ After completing a task, IMMEDIATELY request code review before proceeding.
-❌ You can review code when convenient.
-```
+Repeated independent samples and transcript inspection provide better evidence than a single compliant response. [testing-skills-with-subagents.md](testing-skills-with-subagents.md) offers optional evaluation techniques.
 
-### 4. Social Proof
-**What it is:** Conformity to what others do or what's considered normal.
+## Ethical Questions
 
-**How it works in skills:**
-- Universal patterns: "Every time", "Always"
-- Failure modes: "X without Y = failure"
-- Establishes norms
+1. Does this serve the user's actual goal and preserve their choice of workflow?
+2. Is the claimed authority real and correctly scoped?
+3. Is urgency genuine, or merely a device to compel compliance?
+4. Can a reasonable reader choose a simpler approach when appropriate?
+5. Does the guidance encourage accurate disagreement and disclosure of uncertainty?
 
-**When to use:**
-- Documenting universal practices
-- Warning about common failures
-- Reinforcing standards
+## Background Reading
 
-**Example:**
-```markdown
-✅ Checklists without todo tracking = steps get skipped. Every time.
-❌ Some people find a todo list helpful for checklists.
-```
+- Cialdini, R. B. (2021). *Influence: The Psychology of Persuasion (New and Expanded).* Harper Business.
+- Meincke, L., Shapiro, D., Duckworth, A. L., Mollick, E., Mollick, L., & Cialdini, R. (2025). *Call Me A Jerk: Persuading AI to Comply with Objectionable Requests.* University of Pennsylvania.
 
-### 5. Unity
-**What it is:** Shared identity, "we-ness", in-group belonging.
-
-**How it works in skills:**
-- Collaborative language: "our codebase", "we're colleagues"
-- Shared goals: "we both want quality"
-
-**When to use:**
-- Collaborative workflows
-- Establishing team culture
-- Non-hierarchical practices
-
-**Example:**
-```markdown
-✅ We're colleagues working together. I need your honest technical judgment.
-❌ You should probably tell me if I'm wrong.
-```
-
-### 6. Reciprocity
-**What it is:** Obligation to return benefits received.
-
-**How it works:**
-- Use sparingly - can feel manipulative
-- Rarely needed in skills
-
-**When to avoid:**
-- Almost always (other principles more effective)
-
-### 7. Liking
-**What it is:** Preference for cooperating with those we like.
-
-**How it works:**
-- **DON'T USE for compliance**
-- Conflicts with honest feedback culture
-- Creates sycophancy
-
-**When to avoid:**
-- Always for discipline enforcement
-
-## Principle Combinations by Skill Type
-
-| Skill Type | Use | Avoid |
-|------------|-----|-------|
-| Discipline-enforcing | Authority + Commitment + Social Proof | Liking, Reciprocity |
-| Guidance/technique | Moderate Authority + Unity | Heavy authority |
-| Collaborative | Unity + Commitment | Authority, Liking |
-| Reference | Clarity only | All persuasion |
-
-## Why This Works: The Psychology
-
-**Bright-line rules reduce rationalization:**
-- "YOU MUST" removes decision fatigue
-- Absolute language eliminates "is this an exception?" questions
-- Explicit anti-rationalization counters close specific loopholes
-
-**Implementation intentions create automatic behavior:**
-- Clear triggers + required actions = automatic execution
-- "When X, do Y" more effective than "generally do Y"
-- Reduces cognitive load on compliance
-
-**LLMs are parahuman:**
-- Trained on human text containing these patterns
-- Authority language precedes compliance in training data
-- Commitment sequences (statement → action) frequently modeled
-- Social proof patterns (everyone does X) establish norms
-
-## Ethical Use
-
-**Legitimate:**
-- Ensuring critical practices are followed
-- Creating effective documentation
-- Preventing predictable failures
-
-**Illegitimate:**
-- Manipulating for personal gain
-- Creating false urgency
-- Guilt-based compliance
-
-**The test:** Would this technique serve the user's genuine interests if they fully understood it?
-
-## Research Citations
-
-**Cialdini, R. B. (2021).** *Influence: The Psychology of Persuasion (New and Expanded).* Harper Business.
-- Seven principles of persuasion
-- Empirical foundation for influence research
-
-**Meincke, L., Shapiro, D., Duckworth, A. L., Mollick, E., Mollick, L., & Cialdini, R. (2025).** Call Me A Jerk: Persuading AI to Comply with Objectionable Requests. University of Pennsylvania.
-- Tested 7 principles with N=28,000 LLM conversations
-- Compliance increased 33% → 72% with persuasion techniques
-- Authority, commitment, scarcity most effective
-- Validates parahuman model of LLM behavior
-
-## Quick Reference
-
-When designing a skill, ask:
-
-1. **What type is it?** (Discipline vs. guidance vs. reference)
-2. **What behavior am I trying to change?**
-3. **Which principle(s) apply?** (Usually authority + commitment for discipline)
-4. **Am I combining too many?** (Don't use all seven)
-5. **Is this ethical?** (Serves user's genuine interests?)
+These are background on persuasion, not proof that compulsory skill workflows improve software engineering. Any claimed benefit for a particular skill needs evidence from that task and environment.

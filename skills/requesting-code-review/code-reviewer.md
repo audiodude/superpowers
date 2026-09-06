@@ -1,6 +1,6 @@
 # Code Reviewer Prompt Template
 
-Use this template when dispatching a code reviewer subagent.
+Optional template for a human, direct, or subagent review. Adapt the scope to the actual change; no other skill, formal plan, worktree, commit, or further delegation is required.
 
 **Purpose:** Review completed work against requirements and code quality standards before it cascades into more work.
 
@@ -20,11 +20,12 @@ Subagent (general-purpose):
 
     [PLAN_OR_REQUIREMENTS]
 
-    ## Git Range to Review
+    ## Scope to Review
 
-    **Base:** [BASE_SHA]
-    **Head:** [HEAD_SHA]
+    [Actual committed range or working-tree changes including new files.
+    A reachable diff package is optional. Do not commit just to make a range.]
 
+    For an existing committed range:
     ```bash
     git diff --stat [BASE_SHA]..[HEAD_SHA]
     git diff [BASE_SHA]..[HEAD_SHA]
@@ -34,14 +35,11 @@ Subagent (general-purpose):
 
     Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way. Use tools like `git show`, `git diff`, and `git log` to inspect history. If you need a working copy of a different revision, check it out into a separate temporary directory (e.g. `git worktree add /tmp/review-[SHA] [SHA]`) — never move HEAD on this checkout.
 
-    ## You Do Not Dispatch Subagents
+    ## Coordination
 
-    Do all of this review yourself. Never spawn a subagent to review part
-    of the diff, and never spawn another reviewer for a second opinion.
-    This process already provides every review seat the work gets; a
-    reviewer you spawn duplicates one of them at full cost, and its
-    verdict counts for nothing. If the diff feels too large for one
-    pass, review it in passes yourself and say so in your report.
+    Review directly within the assigned scope. Follow the coordinator's
+    boundaries for delegation and validation; do not automatically spawn
+    another reviewer or invoke another skill.
 
     ## What to Check
 
@@ -67,7 +65,11 @@ Subagent (general-purpose):
     - Tests verify real behavior, not mocks?
     - Edge cases covered?
     - Integration tests where they matter?
-    - All tests passing?
+    - What checks actually ran, and what remains unverified?
+    - Is verification proportionate to the change's risk? TDD is optional.
+    Follow the assigned validation scope. Reuse current evidence where
+    suitable; do not automatically rerun a full suite. Report concrete
+    evidence and limitations rather than inventing test results.
 
     **Production readiness:**
     - Migration strategy if schema changed?
@@ -137,8 +139,7 @@ Subagent (general-purpose):
 **Placeholders:**
 - `[DESCRIPTION]` — brief summary of what was built
 - `[PLAN_OR_REQUIREMENTS]` — what it should do (plan file path, task text, or requirements)
-- `[BASE_SHA]` — starting commit
-- `[HEAD_SHA]` — ending commit
+- `[BASE_SHA]` / `[HEAD_SHA]` — optional committed review range; use working-tree scope for uncommitted work
 
 **Reviewer returns:** Strengths, Issues (Critical / Important / Minor), Recommendations, Assessment
 

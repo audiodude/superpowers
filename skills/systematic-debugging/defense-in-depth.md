@@ -4,12 +4,11 @@
 
 When you fix a bug caused by invalid data, adding validation at one place feels sufficient. But that single check can be bypassed by different code paths, refactoring, or mocks.
 
-**Core principle:** Validate at EVERY layer data passes through. Make the bug structurally impossible.
+**Core principle:** Protect meaningful trust and safety boundaries so alternate paths cannot bypass validation. Add layers where they defend distinct failure modes, not mechanically at every function.
 
 ## Why Multiple Layers
 
-Single validation: "We fixed the bug"
-Multiple layers: "We made the bug impossible"
+A root-cause fix addresses the observed defect. Additional boundary checks can protect alternate paths; neither is proof that every possible bug is impossible.
 
 Different layers catch different cases:
 - Entry validation catches most bugs
@@ -86,12 +85,12 @@ async function gitInit(directory: string) {
 
 ## Applying the Pattern
 
-When you find a bug:
+When invalid data can reach an unsafe operation through multiple paths:
 
-1. **Trace the data flow** - Where does bad value originate? Where used?
-2. **Map all checkpoints** - List every point data passes through
-3. **Add validation at each layer** - Entry, business, environment, debug
-4. **Test each layer** - Try to bypass layer 1, verify layer 2 catches it
+1. **Trace the data flow** - Where does the invalid value originate and where is it used?
+2. **Map relevant boundaries** - Identify independent entry points and dangerous operations.
+3. **Add justified protections** - Validate inputs and invariants where bypass is possible; use diagnostics only when they aid investigation.
+4. **Verify protections** - Exercise representative bypasses and failure cases, including the original reproduction.
 
 ## Example from Session
 
@@ -109,7 +108,7 @@ Bug: Empty `projectDir` caused `git init` in source code
 - Layer 3: `WorktreeManager` refuses git init outside tmpdir in tests
 - Layer 4: Stack trace logging before git init
 
-**Result:** All 1847 tests passed, bug impossible to reproduce
+**Historical result:** The original session reported 1847 passing tests and no reproduction of the observed bug; that does not prove all future failures impossible.
 
 ## Key Insight
 
@@ -119,4 +118,4 @@ All four layers were necessary. During testing, each layer caught bugs the other
 - Edge cases on different platforms needed environment guards
 - Debug logging identified structural misuse
 
-**Don't stop at one validation point.** Add checks at every layer.
+Retain required validation and security checks. Consider additional boundaries when one check can be bypassed, without adding redundant checks or logging solely to follow a fixed four-layer process.

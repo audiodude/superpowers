@@ -2,6 +2,8 @@
 
 Skills speak in actions ("dispatch a subagent", "create a todo", "read a file"). On Hermes Agent these resolve to the tools below.
 
+Optional reference only: mappings do not require skill invocation, delegation, or task tracking. Follow the active tool catalog and governing instructions.
+
 ## Tools
 
 | Action skills request | Hermes tool |
@@ -25,11 +27,10 @@ When a skill mentions "your instructions file," on Hermes Agent this is **`AGENT
 ## Invoking a skill
 
 Hermes Agent has a `skills` toolset with `skill_view` and `skills_list` tools.
-To invoke a superpowers skill, use:
+To consult a requested or useful Superpowers skill, choose the relevant name, for example:
 
-```
+```text
 skill_view("brainstorming")
-skill_view("test-driven-development")
 ```
 
 If `skill_view` cannot find a superpowers skill (it may not appear in the catalog
@@ -43,7 +44,7 @@ This fallback is the same mechanism used by other harnesses without native skill
 
 ## Subagent dispatch
 
-Use `delegate_task` to spawn isolated subagents for parallel or sequential workstreams:
+If delegation would help, `delegate_task` can spawn isolated subagents:
 
 ```
 delegate_task(goal="...", context="...", toolsets=[...], role="leaf")
@@ -53,4 +54,4 @@ If `delegate_task` is unavailable, do the work inline rather than inventing tool
 
 ## Task tracking
 
-Use the `todo` tool for task tracking within a session. For multi-agent task boards, use `hermes kanban` CLI if available. Treat older `TodoWrite` references as the task-tracking action.
+If tracking would help, use `todo` within a session or `hermes kanban` for a shared task board when available. An existing outline may be enough. Older `TodoWrite` references describe this optional task-tracking action.

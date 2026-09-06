@@ -2,6 +2,8 @@
 
 Skills speak in actions ("dispatch a subagent", "create a todo", "read a file"). On Gemini CLI these resolve to the tools below.
 
+These are optional action mappings, not required workflows. Use subagents, task tracking, and other skills only when requested or useful. The active tools and governing instructions take precedence over this reference.
+
 | Action skills request | Gemini CLI equivalent |
 |----------------------|----------------------|
 | Read a file | `read_file` |
@@ -31,7 +33,7 @@ User-level skills live at **`~/.gemini/skills/`**, with **`~/.agents/skills/`** 
 
 Gemini CLI dispatches subagents through the `invoke_agent` tool, which takes `agent_name` and `prompt` parameters. The same dispatch is also surfaced as a chat-syntax shortcut: typing `@generalist <prompt>` is equivalent to calling `invoke_agent` with `agent_name: "generalist"`. Built-in agent names include `generalist`, `cli_help`, `codebase_investigator`, and (with browser tooling enabled) `browser_agent`.
 
-Skills dispatch with `Subagent (general-purpose):` and either reference a prompt-template file (e.g., `superpowers:subagent-driven-development`'s `./implementer-prompt.md`) or supply an inline prompt. On Gemini CLI:
+When you choose to delegate using a `Subagent (general-purpose):` template, the following mappings can help:
 
 | Skill dispatch form | Gemini CLI equivalent |
 |---------------------|----------------------|
@@ -45,7 +47,7 @@ Skills provide prompt templates with placeholders like `{WHAT_WAS_IMPLEMENTED}` 
 
 ### Parallel dispatch
 
-Gemini CLI supports parallel subagent dispatch. Issue multiple `invoke_agent` calls in the same response (or multiple `@generalist` invocations in one prompt) to run independent subagent work in parallel. Keep dependent tasks sequential, but do not serialize independent subagent tasks just to preserve a simpler history.
+Gemini CLI supports parallel subagent dispatch. When delegation is useful, multiple `invoke_agent` calls in the same response (or multiple `@generalist` invocations in one prompt) can run independent work in parallel. Keep dependencies sequential and avoid overlapping file ownership. Inline execution is also valid.
 
 ## Additional Gemini CLI tools
 

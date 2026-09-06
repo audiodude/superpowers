@@ -17,37 +17,9 @@ def assert_equal(actual, expected, label):
     if actual != expected:
         raise AssertionError(f"{label}: expected {expected!r}, got {actual!r}")
 
-def assert_present(text, needle, label):
-    if needle not in text:
-        raise AssertionError(f"{label}: missing {needle!r}")
-
 assert_equal(manifest.get("name"), "superpowers", "plugin name")
 assert_equal(manifest.get("skills"), "./skills/", "skills path")
-assert_equal(
-    manifest.get("sessionStart", {}).get("skill"),
-    "using-superpowers",
-    "sessionStart.skill",
-)
-
-instructions = manifest.get("skillInstructions")
-if not isinstance(instructions, str) or not instructions.strip():
-    raise AssertionError("skillInstructions must be a non-empty string")
-
-for token in [
-    "AskUserQuestion",
-    "TodoList",
-    "Agent",
-    "Skill",
-    "Read",
-    "Write",
-    "Edit",
-    "Bash",
-    "Grep",
-    "Glob",
-    "FetchURL",
-    "WebSearch",
-]:
-    assert_present(instructions, token, "skillInstructions")
+assert_equal(manifest.get("sessionStart"), None, "no automatic skill loading")
 
 version_config = json.loads(
     (manifest_path.parents[1] / ".version-bump.json").read_text(encoding="utf-8")

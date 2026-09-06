@@ -7,11 +7,11 @@ description: Use when facing 2+ independent tasks that can be worked on without 
 
 ## Overview
 
-You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
+Parallel delegation is an optional technique for substantial independent tasks. Direct execution is often simpler for small edits, related failures, or work that needs shared context. Availability of subagents alone is not a reason to use them.
 
-When you have multiple unrelated failures (different test files, different subsystems, different bugs), investigating them sequentially wastes time. Each investigation is independent and can happen in parallel.
+When choosing delegation, give each agent focused context, clear ownership, and an observable goal. Dispatch independent work concurrently; avoid overlapping writers unless the harness provides isolation and you have an integration strategy.
 
-**Core principle:** Dispatch one agent per independent problem domain. Let them work concurrently.
+No other skill, plan file, worktree, announcement, or commit is required by this guide.
 
 ## When to Use
 
@@ -33,7 +33,7 @@ digraph when_to_use {
 }
 ```
 
-**Use when:**
+**Consider when:**
 - 3+ test files failing with different root causes
 - Multiple subsystems broken independently
 - Each problem can be understood without context from others
@@ -81,7 +81,7 @@ Multiple dispatch calls in one response = parallel execution. One per response =
 When agents return:
 - Read each summary
 - Verify fixes don't conflict
-- Run full test suite
+- Run integration checks proportionate to the combined change; use a full suite when warranted
 - Integrate all changes
 
 ## Agent Prompt Structure
@@ -163,5 +163,5 @@ Agent 3 → Fix tool-approval-race-conditions.test.ts
 After agents return:
 1. **Review each summary** - Understand what changed
 2. **Check for conflicts** - Did agents edit same code?
-3. **Run full suite** - Verify all fixes work together
+3. **Verify integration** - Exercise affected behavior together; broaden checks when risk warrants it
 4. **Spot check** - Agents can make systematic errors

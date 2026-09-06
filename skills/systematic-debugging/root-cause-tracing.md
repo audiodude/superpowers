@@ -12,14 +12,14 @@ Bugs often manifest deep in the call stack (git init in wrong directory, file cr
 digraph when_to_use {
     "Bug appears deep in stack?" [shape=diamond];
     "Can trace backwards?" [shape=diamond];
-    "Fix at symptom point" [shape=box];
+    "Gather missing evidence or identify mitigation" [shape=box];
     "Trace to original trigger" [shape=box];
-    "BETTER: Also add defense-in-depth" [shape=box];
+    "Consider relevant defense-in-depth" [shape=box];
 
     "Bug appears deep in stack?" -> "Can trace backwards?" [label="yes"];
     "Can trace backwards?" -> "Trace to original trigger" [label="yes"];
-    "Can trace backwards?" -> "Fix at symptom point" [label="no - dead end"];
-    "Trace to original trigger" -> "BETTER: Also add defense-in-depth";
+    "Can trace backwards?" -> "Gather missing evidence or identify mitigation" [label="no - dead end"];
+    "Trace to original trigger" -> "Consider relevant defense-in-depth";
 }
 ```
 
@@ -136,28 +136,28 @@ digraph principle {
     "Trace backwards" [shape=box];
     "Is this the source?" [shape=diamond];
     "Fix at source" [shape=box];
-    "Add validation at each layer" [shape=box];
-    "Bug impossible" [shape=doublecircle];
-    "NEVER fix just the symptom" [shape=octagon, style=filled, fillcolor=red, fontcolor=white];
+    "Validate relevant boundaries" [shape=box];
+    "Verify reproduction and protections" [shape=doublecircle];
+    "Gather missing evidence" [shape=box];
 
     "Found immediate cause" -> "Can trace one level up?";
     "Can trace one level up?" -> "Trace backwards" [label="yes"];
-    "Can trace one level up?" -> "NEVER fix just the symptom" [label="no"];
+    "Can trace one level up?" -> "Gather missing evidence" [label="no"];
     "Trace backwards" -> "Is this the source?";
     "Is this the source?" -> "Trace backwards" [label="no - keeps going"];
     "Is this the source?" -> "Fix at source" [label="yes"];
-    "Fix at source" -> "Add validation at each layer";
-    "Add validation at each layer" -> "Bug impossible";
+    "Fix at source" -> "Validate relevant boundaries";
+    "Validate relevant boundaries" -> "Verify reproduction and protections";
 }
 ```
 
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
+Prefer a fix at the original trigger over a speculative patch where the error appears. If the cause is not yet reachable, gather evidence and describe any authorized temporary mitigation honestly.
 
 ## Stack Trace Tips
 
 **In tests:** Use `console.error()` not logger - logger may be suppressed
 **Before operation:** Log before the dangerous operation, not after it fails
-**Include context:** Directory, cwd, environment variables, timestamps
+**Include context:** Relevant directory, cwd, and timestamps; redact secrets and personal data rather than dumping environment variables
 **Capture stack:** `new Error().stack` shows complete call chain
 
 ## Real-World Impact

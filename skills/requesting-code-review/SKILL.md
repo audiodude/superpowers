@@ -1,37 +1,32 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+description: Use when an independent review is requested or would materially improve confidence in a change
 ---
 
 # Requesting Code Review
 
-Dispatch a code reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history.
+Review can catch correctness, security, and maintainability issues before they spread. Choose self-review, a human reviewer, or an available subagent according to the change's risk and the user's request.
 
-**Core principle:** Review early, review often.
+This is an optional recipe. A simple edit need not trigger delegation, a plan, a worktree, commits, or another skill. A substantial feature, risky refactor, or difficult bug fix often benefits from independent review.
 
-## When to Request Review
+## When Review Helps
 
-**Mandatory:**
-- After each task in subagent-driven development
-- After completing major feature
-- Before merge to main
-
-**Optional but valuable:**
-- When stuck (fresh perspective)
-- Before refactoring (baseline check)
-- After fixing complex bug
+- A change crosses component or security boundaries
+- A fresh perspective could resolve a specific uncertainty
+- A repository requires review before merging
+- The user explicitly requests review
 
 ## How to Request
 
-**1. Get git SHAs:**
+**1. Identify the actual review scope:** Use a commit range if changes are committed, or a working-tree diff and new files when they are not. Do not create commits solely to fit this template.
 ```bash
-BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
+BASE_SHA=<recorded-starting-commit>  # Use the actual scope, not an assumed HEAD~1
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code reviewer subagent:**
+**2. Provide review context:**
 
-Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md](code-reviewer.md)
+For a subagent or human reviewer, optionally adapt [code-reviewer.md](code-reviewer.md). A direct review can use the same rubric. Supply requirements, the actual changed files/diff, relevant constraints, and available verification evidence; no session-history dump is needed.
 
 **Placeholders:**
 - `{DESCRIPTION}` - Brief summary of what you built
@@ -41,8 +36,8 @@ Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md
 
 **3. Act on feedback:**
 - Fix Critical issues immediately
-- Fix Important issues before proceeding
-- Note Minor issues for later
+- Resolve validated Important issues before presenting the affected work as ready
+- Distinguish optional improvements from defects; defer Minor items explicitly when appropriate
 - Push back if reviewer is wrong (with reasoning)
 
 ## Example
@@ -52,7 +47,7 @@ Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md
 
 You: Let me request code review before proceeding.
 
-BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
+BASE_SHA=<recorded-starting-commit>
 HEAD_SHA=$(git rev-parse HEAD)
 
 [Dispatch code reviewer subagent]
@@ -72,20 +67,13 @@ You: [Fix progress indicators]
 [Continue to Task 3]
 ```
 
-## Common Rationalizations
+## Common Mistakes
 
-| Excuse | Reality |
-|--------|---------|
-| "I'll just review the diff myself instead of dispatching a reviewer" | You're the coordinator — reviewing the diff inline burns the context window you need to keep driving the work. Dispatch a reviewer subagent: the diff and the evaluation live in its context, and only the findings come back to you. |
-| "The reviewer needs my whole session history to understand the change" | Hand it precisely crafted context, never your session's history. That keeps the reviewer on the work product, not your thought process. |
-
-## Red Flags
-
-**Never:**
-- Skip review because "it's simple"
-- Ignore Critical issues
-- Proceed with unfixed Important issues
-- Argue with valid technical feedback
+- Delegating a trivial review when inspecting the change directly would suffice.
+- Giving a reviewer an incomplete diff or omitting uncommitted/new files.
+- Treating reviewer findings as unquestionable: check technical claims against the code and requirements.
+- Ignoring validated security, data-loss, or correctness defects.
+- Treating a review verdict as authorization to commit, push, or merge.
 
 **If reviewer wrong:**
 - Push back with technical reasoning

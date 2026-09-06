@@ -13,9 +13,6 @@ _PLUGIN_DIR = os.path.abspath(
 )
 sys.path.insert(0, _PLUGIN_DIR)
 
-BOOTSTRAP_MARKER = "superpowers:using-superpowers bootstrap for hermes"
-
-
 def _load_plugin():
     """Re-import plugin module fresh."""
     if "__init__" in sys.modules:
@@ -23,25 +20,11 @@ def _load_plugin():
     return importlib.import_module("__init__")
 
 
-def _fire_pre_llm(ctx, **kwargs):
-    hook = ctx._hooks["pre_llm_call"]
-    defaults = {
-        "session_id": "s1",
-        "user_message": "hi",
-        "conversation_history": [],
-        "is_first_turn": False,
-        "model": "test-model",
-        "platform": "cli",
-    }
-    defaults.update(kwargs)
-    return hook(**defaults)
-
-
 class TestPluginRegistration:
-    def test_register_attaches_only_pre_llm_call_hook(self, mock_ctx):
+    def test_register_leaves_session_context_untouched(self, mock_ctx):
         plugin = _load_plugin()
         plugin.register(mock_ctx)
-        assert list(mock_ctx._hooks.keys()) == ["pre_llm_call"]
+        assert mock_ctx._hooks == {}
 
     def test_register_registers_every_stock_skill_as_path(self, mock_ctx):
         plugin = _load_plugin()
@@ -67,32 +50,6 @@ class TestPluginRegistration:
             if os.path.isfile(os.path.join(skills_root, entry, "SKILL.md"))
         }
         assert set(mock_ctx._skills.keys()) == expected
-
-
-class TestBootstrapInjection:
-    def test_first_turn_returns_bootstrap_context(self, mock_ctx):
-        plugin = _load_plugin()
-        plugin.register(mock_ctx)
-        result = _fire_pre_llm(mock_ctx, is_first_turn=True)
-        assert isinstance(result, dict)
-        content = result["context"]
-        assert BOOTSTRAP_MARKER in content
-        assert content.startswith("<EXTREMELY_IMPORTANT>")
-        assert content.rstrip().endswith("</EXTREMELY_IMPORTANT>")
-
-    def test_later_turns_return_none(self, mock_ctx):
-        plugin = _load_plugin()
-        plugin.register(mock_ctx)
-        assert _fire_pre_llm(mock_ctx, is_first_turn=False) is None
-        assert _fire_pre_llm(mock_ctx, is_first_turn=None) is None
-
-    def test_hook_tolerates_future_kwargs(self, mock_ctx):
-        plugin = _load_plugin()
-        plugin.register(mock_ctx)
-        result = _fire_pre_llm(
-            mock_ctx, is_first_turn=True, telemetry_schema_version=3
-        )
-        assert BOOTSTRAP_MARKER in result["context"]
 
 
 class TestLayoutResolution:

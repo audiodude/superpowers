@@ -8,34 +8,21 @@ Add superpowers to the `plugin` array in your `opencode.json` (global or project
 
 ```json
 {
-  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git"]
+  "plugin": ["superpowers@git+https://github.com/audiodude/superpowers.git"]
 }
 ```
 
 Restart OpenCode. The plugin installs through OpenCode's plugin manager and
 registers all skills.
 
-Verify by asking: "Tell me about your superpowers"
+Verify by asking the native `skill` tool to load `systematic-debugging`. Skills are advisory: use them when requested or clearly useful, and handle ordinary questions and simple edits directly.
 
 OpenCode uses its own plugin install. If you also use Claude Code, Codex, or
 another harness, install Superpowers separately for each one.
 
 ### Migrating from the old symlink-based install
 
-If you previously installed superpowers using `git clone` and symlinks, remove the old setup:
-
-```bash
-# Remove old symlinks
-rm -f ~/.config/opencode/plugins/superpowers.js
-rm -rf ~/.config/opencode/skills/superpowers
-
-# Optionally remove the cloned repo
-rm -rf ~/.config/opencode/superpowers
-
-# Remove skills.paths from opencode.json if you added one for superpowers
-```
-
-Then follow the installation steps above.
+Inspect the old Superpowers plugin and skills links under `~/.config/opencode/`. Remove only links or configuration entries that point to the old installation, then follow the installation steps above. Preserve unrelated plugins, personal skills, and any local modifications in the old clone. Start a fresh session to discard previously injected conversation instructions.
 
 ## Usage
 
@@ -87,20 +74,17 @@ and Bun versions pin that resolved git dependency in a lockfile or cache, so a
 restart may not pick up the newest Superpowers commit. If updates do not appear,
 clear OpenCode's package cache or reinstall the plugin.
 
-To pin a specific version, use a branch or tag:
+To pin a revision, replace `ADVISORY_COMMIT` with a commit from this fork. Inherited upstream tags retain the old behavior:
 
 ```json
 {
-  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v5.0.3"]
+  "plugin": ["superpowers@git+https://github.com/audiodude/superpowers.git#ADVISORY_COMMIT"]
 }
 ```
 
 ## How It Works
 
-The plugin does two things:
-
-1. **Injects bootstrap context** via the `experimental.chat.messages.transform` hook, adding superpowers awareness to every conversation.
-2. **Registers the skills directory** via the `config` hook, so OpenCode discovers all superpowers skills without symlinks or manual config.
+The plugin registers the skills directory through the `config` hook, preserving existing paths and avoiding duplicates. It does not transform messages or load a bootstrap at startup. `using-superpowers` remains available as an optional entry guide.
 
 ### Tool Mapping
 
@@ -134,7 +118,7 @@ the plugin, try installing with system npm and pointing OpenCode at the local
 package:
 
 ```powershell
-npm install superpowers@git+https://github.com/obra/superpowers.git --prefix "$HOME\.config\opencode"
+npm install superpowers@git+https://github.com/audiodude/superpowers.git --prefix "$HOME\.config\opencode"
 ```
 
 Then use the installed package path in `opencode.json`:
@@ -151,13 +135,12 @@ Then use the installed package path in `opencode.json`:
 2. Check that the plugin is loading (see above)
 3. Each skill needs a `SKILL.md` file with valid YAML frontmatter
 
-### Bootstrap not appearing
+### Old startup policy still appearing
 
-1. Check OpenCode version supports `experimental.chat.messages.transform` hook
-2. Restart OpenCode after config changes
+Remove any previous upstream plugin registration or bootstrap symlink before installing this fork, then start a fresh session. Existing conversation history can retain instructions injected by the previous installation.
 
 ## Getting Help
 
-- Report issues: https://github.com/obra/superpowers/issues
-- Main documentation: https://github.com/obra/superpowers
+- Report fork issues: https://github.com/audiodude/superpowers/issues
+- Main documentation: https://github.com/audiodude/superpowers
 - OpenCode docs: https://opencode.ai/docs/

@@ -42,15 +42,6 @@ else
     exit 1
 fi
 
-# Test 3: Check using-superpowers skill exists (critical for bootstrap)
-echo "Test 3: Checking using-superpowers skill (required for bootstrap)..."
-if [ -f "$SUPERPOWERS_SKILLS_DIR/using-superpowers/SKILL.md" ]; then
-    echo "  [PASS] using-superpowers skill exists"
-else
-    echo "  [FAIL] using-superpowers skill not found (required for bootstrap)"
-    exit 1
-fi
-
 # Test 4: Verify plugin JavaScript syntax (basic check)
 echo "Test 4: Checking plugin JavaScript syntax..."
 if node --check "$SUPERPOWERS_PLUGIN_FILE" 2>/dev/null; then
@@ -60,14 +51,19 @@ else
     exit 1
 fi
 
-# Test 5: Verify bootstrap text does not reference a hardcoded skills path
-echo "Test 5: Checking bootstrap does not advertise a wrong skills path..."
-if grep -q 'configDir}/skills/superpowers/' "$SUPERPOWERS_PLUGIN_FILE"; then
-    echo "  [FAIL] Plugin still references old configDir skills path"
-    exit 1
-else
-    echo "  [PASS] Plugin does not advertise a misleading skills path"
-fi
+# Verify discovery preserves user configuration and remains idempotent.
+node --input-type=module - "$SUPERPOWERS_PLUGIN_FILE" "$SUPERPOWERS_SKILLS_DIR" <<'JS'
+import assert from 'node:assert/strict';
+import { pathToFileURL } from 'node:url';
+const { SuperpowersPlugin } = await import(pathToFileURL(process.argv[2]));
+const plugin = await SuperpowersPlugin({});
+assert.equal(plugin['experimental.chat.messages.transform'], undefined);
+const config = { skills: { paths: ['/personal/skills'], urls: ['https://example.com/skills'] } };
+await plugin.config(config);
+await plugin.config(config);
+assert.deepEqual(config.skills.paths, ['/personal/skills', process.argv[3]]);
+assert.deepEqual(config.skills.urls, ['https://example.com/skills']);
+JS
 
 # Test 6: Verify personal test skill was created
 echo "Test 6: Checking test fixtures..."

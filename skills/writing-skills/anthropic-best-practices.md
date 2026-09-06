@@ -2,6 +2,8 @@
 
 > Learn how to write effective Skills that agents can discover and use successfully.
 
+**Advisory fork note:** This is supplementary platform authoring reference. Its examples and evaluation workflows are optional techniques, not requirements to load skills, run subagents, create artifacts, or gate a bounded edit. Use the parts relevant to the task; system, developer, and applicable user instructions remain authoritative.
+
 Good Skills are concise, well-structured, and tested with real usage. This guide provides practical authoring decisions to help you write Skills that agents can discover and use effectively.
 
 For conceptual background on how Skills work, see the [Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview).
@@ -720,9 +722,9 @@ Guide agents through decision points:
 
 ## Evaluation and iteration
 
-### Build evaluations first
+### Consider evaluations for uncertain guidance
 
-**Create evaluations BEFORE writing extensive documentation.** This ensures your Skill solves real problems rather than documenting imagined ones.
+For extensive or consequential behavioral guidance, defining evaluations before drafting can help distinguish real problems from imagined ones. A factual correction or bounded edit need not wait for a behavioral test campaign.
 
 **Evaluation-driven development:**
 
@@ -755,7 +757,7 @@ This approach ensures you're solving actual problems rather than anticipating re
 
 ### Develop Skills iteratively with the agent
 
-The most effective Skill development process involves the agent itself. Work with one instance ("Agent A") to create a Skill that will be used by other instances ("Agent B"). Agent A helps you design and refine instructions, while Agent B tests them in real tasks. This works because the underlying models understand both how to write effective agent instructions and what information agents need.
+One useful Skill development approach uses one instance ("Agent A") to refine guidance and another ("Agent B") to try it on representative tasks. Fresh-reader behavior can reveal missing context. This is optional; direct authoring and source review may be enough for smaller changes, and no subagent capability is required.
 
 **Creating a new Skill:**
 
@@ -781,13 +783,13 @@ The most effective Skill development process involves the agent itself. Work wit
 
 **Iterating on existing Skills:**
 
-The same hierarchical pattern continues when improving Skills. You alternate between:
+If this comparison is useful when improving a Skill, alternate between:
 
 * **Working with Agent A** (the expert who helps refine the Skill)
 * **Testing with Agent B** (the agent using the Skill to perform real work)
 * **Observing Agent B's behavior** and bringing insights back to Agent A
 
-1. **Use the Skill in real workflows**: Give Agent B (with the Skill loaded) actual tasks, not test scenarios
+1. **Use representative workflows**: Give Agent B concrete sandboxed tasks rather than only asking it to recite the guidance
 
 2. **Observe Agent B's behavior**: Note where it struggles, succeeds, or makes unexpected choices
 
@@ -795,7 +797,7 @@ The same hierarchical pattern continues when improving Skills. You alternate bet
 
 3. **Return to Agent A for improvements**: Share the current SKILL.md and describe what you observed. Ask: "I noticed Agent B forgot to filter test accounts when I asked for a regional report. The Skill mentions filtering, but maybe it's not prominent enough?"
 
-4. **Review Agent A's suggestions**: Agent A might suggest reorganizing to make rules more prominent, using stronger language like "MUST filter" instead of "always filter", or restructuring the workflow section.
+4. **Review Agent A's suggestions**: Consider clarifying the filtering condition, adding a concrete example, or reorganizing the relevant reference. Stronger wording alone is not evidence of a better instruction.
 
 5. **Apply and test changes**: Update the Skill with Agent A's refinements, then test again with Agent B on similar requests
 
